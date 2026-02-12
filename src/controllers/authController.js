@@ -1,4 +1,5 @@
 import * as authService from "../services/authService.js";
+import "dotenv/config";
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
