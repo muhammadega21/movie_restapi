@@ -2,37 +2,51 @@ import * as authService from "../services/authService.js";
 import "dotenv/config";
 
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  const user = await authService.register({
-    name,
-    email,
-    password,
-  });
+    const user = await authService.register({
+      name,
+      email,
+      password,
+    });
 
-  res.status(201).json({
-    status: "success",
-    data: user,
-  });
+    res.status(201).json({
+      status: "success",
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const { token, user } = await authService.login({ email, password });
+    const { token, user } = await authService.login({ email, password });
 
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: (Number(process.env.JWT_EXPIRES_IN) || 1) * 24 * 60 * 60 * 1000,
-  });
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: (Number(process.env.JWT_EXPIRES_IN) || 1) * 24 * 60 * 60 * 1000,
+    });
 
-  res.status(200).json({
-    status: "success",
-    user,
-    token,
-  });
+    res.status(200).json({
+      status: "success",
+      user,
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
 };
 
 const logout = async (req, res) => {
